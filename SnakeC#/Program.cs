@@ -1,8 +1,6 @@
 ﻿// Add main menu with color and speed options w/ Maybe special game modes :/
-// Add randomized locations for food and eating
 // Add score and highscore using files and eating
-using System.Xml.Linq;
-
+// Add differient colored head
 namespace Snake
 {
     public enum Direction
@@ -25,21 +23,44 @@ namespace Snake
         }
     }
 
+    public class Food
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+
+        public Food(int x, int y)
+        {
+            this.X = x;
+            this.Y = y;
+        }
+
+        public void AddFood()
+        {
+            Random rng = new Random();
+            X = rng.Next(2, 117);
+            Y = rng.Next(2,27);
+        }
+    }
+
     public class Snake
     {
         public List<Point> bodyLocations = new List<Point>();
         private Direction direction;
+        private Food food;
         public bool gameOver = false;
+
+        private int startingX = (Console.WindowWidth / 2) - 10;
+        private int startingY = (Console.WindowHeight / 2) - 1;
 
         public Snake()
         {
             direction = Direction.Right;
             bodyLocations = new List<Point> {
-                new Point(10, 2),
-                new Point(11, 2),
-                new Point(12, 2),
-                new Point(13, 2),
-                new Point(14, 2),
+                new Point(startingX, startingY),
+                new Point(startingX + 1, startingY),
+                new Point(startingX + 2, startingY),
+                new Point(startingX + 3, startingY),
+                new Point(startingX + 4, startingY),
             };
 
             foreach (var p in bodyLocations)
@@ -51,6 +72,13 @@ namespace Snake
 
             Console.SetCursorPosition(bodyLocations.First().X, bodyLocations.First().Y);
             Console.Write(' ');
+
+            food = new Food(0, 0);
+            food.AddFood();
+            if (bodyLocations.Contains(new Point(food.X, food.Y)))
+            {
+                food.AddFood();
+            }
         }
 
         public void UpdateSnake()
@@ -90,7 +118,14 @@ namespace Snake
                 }
             }
             MoveSnake(direction);
-            DrawSnake();
+
+            if (bodyLocations.Last().X == food.X && bodyLocations.Last().Y == food.Y)
+            {
+                bodyLocations.Insert(0, new Point(food.X, food.Y));
+                food.AddFood();
+            }
+
+            Draw();
         }
 
         public void MoveSnake(Direction direction)
@@ -114,7 +149,7 @@ namespace Snake
                 default:
                     break;
             }
-            if (bodyLocations.Last().X >= 129 || bodyLocations.Last().X <= 1 || bodyLocations.Last().Y >= 29 || bodyLocations.Last().Y <= 1)
+            if (bodyLocations.Last().X >= 118 || bodyLocations.Last().X <= 1 || bodyLocations.Last().Y >= 28 || bodyLocations.Last().Y <= 1)
             {
                 gameOver = true;
             }
@@ -126,14 +161,18 @@ namespace Snake
             bodyLocations.Add(newHead);
             bodyLocations.RemoveAt(0);
         }
-        public void DrawSnake()
+        public void Draw()
         {
-            Console.ForegroundColor = ConsoleColor.Green;
             Console.SetCursorPosition(bodyLocations.First().X, bodyLocations.First().Y);
             Console.Write(' ');
 
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.SetCursorPosition(bodyLocations.Last().X, bodyLocations.Last().Y);
             Console.Write('#');
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.SetCursorPosition(food.X, food.Y);
+            Console.Write('@');
         }
     }
 
@@ -143,7 +182,7 @@ namespace Snake
         {
             int screenWidth = Console.WindowWidth;
             int screenHeight = Console.WindowHeight;
-            int updateSpeed = 100;
+            int updateSpeed = 70;
             Console.CursorVisible = false;
             Snake snake = new();
 
