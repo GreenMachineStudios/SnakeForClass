@@ -26,7 +26,7 @@ namespace Snake
 
     public class Snake
     {
-        private List<Point> bodyLocations = new List<Point>();
+        public List<Point> bodyLocations = new List<Point>();
         private Direction direction;
 
         public Snake()
@@ -46,6 +46,9 @@ namespace Snake
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write('#');
             }
+
+            Console.SetCursorPosition(bodyLocations.First().X, bodyLocations.First().Y);
+            Console.Write(' ');
         }
 
         public void UpdateSnake()
@@ -85,64 +88,44 @@ namespace Snake
                 }
             }
             MoveSnake(direction);
-            DrawSnake(direction);
+            DrawSnake();
         }
 
         public void MoveSnake(Direction direction)
         {
-            switch(direction)
+            Point newHead = new Point();
+
+            switch (direction)
             {
                 case Direction.Up:
-                    bodyLocations.Add(new Point(bodyLocations.Last().X, bodyLocations.Last().Y - 1));
+                    newHead = new Point(bodyLocations.Last().X, bodyLocations.Last().Y - 1);
                     break;
                 case Direction.Down:
-                    bodyLocations.Add(new Point(bodyLocations.Last().X, bodyLocations.Last().Y + 1));
+                    newHead = new Point(bodyLocations.Last().X, bodyLocations.Last().Y + 1);
                     break;
                 case Direction.Right:
-                    bodyLocations.Add(new Point(bodyLocations.Last().X + 1, bodyLocations.Last().Y));
+                    newHead = new Point(bodyLocations.Last().X + 1, bodyLocations.Last().Y);
                     break;
                 case Direction.Left:
-                    bodyLocations.Add(new Point(bodyLocations.Last().X - 1, bodyLocations.Last().Y));
+                    newHead = new Point(bodyLocations.Last().X - 1, bodyLocations.Last().Y);
                     break;
                 default:
                     break;
             }
+
+            bodyLocations.Add(newHead);
+            bodyLocations.RemoveAt(0);
         }
 
-        public void DrawSnake(Direction direction)
+        public void DrawSnake()
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            //Remove tail of snake
-            bodyLocations.RemoveAt(0);
-            if (direction == Direction.Left)
-            {
-                Console.SetCursorPosition(bodyLocations.First().X + 1, bodyLocations.First().Y);
-                Console.Write(' ');
-            }
-            else if (direction == Direction.Right)
-            {
-                Console.SetCursorPosition(bodyLocations.First().X - 1, bodyLocations.First().Y);
-                Console.Write(' ');
-            }
-            else if (direction == Direction.Up)
-            {
-                Console.SetCursorPosition(bodyLocations.First().X, bodyLocations.First().Y + 1);
-                Console.Write(' ');
-            }
-            else if (direction == Direction.Down)
-            {
-                Console.SetCursorPosition(bodyLocations.First().X, bodyLocations.First().Y - 1);
-                Console.Write(' ');
-            }
-            //Draw new head of snake
+
+            Console.SetCursorPosition(bodyLocations.First().X, bodyLocations.First().Y);
+            Console.Write(' ');
+
             Console.SetCursorPosition(bodyLocations.Last().X, bodyLocations.Last().Y);
             Console.Write('#');
-
-            //Kill snake if it touches walls
-            if (bodyLocations.Last().X >= 129 || bodyLocations.Last().X <= 1 || bodyLocations.Last().Y >= 29 || bodyLocations.Last().Y <= 1)
-            {
-                Environment.Exit(0);
-            }
         }
     }
 
@@ -181,6 +164,10 @@ namespace Snake
             while (gameOver != true)
             {
                 snake.UpdateSnake();
+                if (snake.bodyLocations.Last().X >= 129 || snake.bodyLocations.Last().X <= 1 || snake.bodyLocations.Last().Y >= 29 || snake.bodyLocations.Last().Y <= 1)
+                {
+                    gameOver = true;
+                }
                 Thread.Sleep(updateSpeed);
             }
         }
