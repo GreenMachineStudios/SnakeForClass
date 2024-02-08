@@ -1,4 +1,8 @@
-﻿namespace Snake
+﻿// Add main menu with color and speed options w/ Maybe special game modes :/
+// Add randomized locations for food and eating
+// Make snake die if it hits itself
+// Add score and highscore using files and eating
+namespace Snake
 {
     public enum Direction
     {
@@ -40,7 +44,7 @@
             {
                 Console.SetCursorPosition(p.X, p.Y);
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write('■');
+                Console.Write('#');
             }
         }
 
@@ -53,16 +57,28 @@
                 switch(key)
                 {
                     case ConsoleKey.UpArrow:
-                        direction = Direction.Up;
+                        if (direction != Direction.Down)
+                        {
+                            direction = Direction.Up;
+                        }
                         break;
                     case ConsoleKey.DownArrow:
-                        direction = Direction.Down;
+                        if (direction != Direction.Up)
+                        {
+                            direction = Direction.Down;
+                        }
                         break;
                     case ConsoleKey.RightArrow:
-                        direction = Direction.Right;
+                        if (direction != Direction.Left)
+                        {
+                            direction = Direction.Right;
+                        }
                         break;
                     case ConsoleKey.LeftArrow:
-                        direction = Direction.Left;
+                        if (direction != Direction.Right)
+                        {
+                            direction = Direction.Left;
+                        }
                         break;
                     default:
                         break;
@@ -95,6 +111,12 @@
 
         public void DrawSnake(Direction direction)
         {
+            //Kill snake if it touches walls
+            if (bodyLocations.Last().X >= 129 || bodyLocations.Last().X <= 1 || bodyLocations.Last().Y >= 29 || bodyLocations.Last().Y <= 1)
+            {
+                Environment.Exit(0);
+            }
+
             Console.ForegroundColor = ConsoleColor.Green;
             //Remove tail of snake
             bodyLocations.RemoveAt(0);
@@ -120,8 +142,7 @@
             }
             //Draw new head of snake
             Console.SetCursorPosition(bodyLocations.Last().X, bodyLocations.Last().Y);
-            Console.Write('■');
-
+            Console.Write('#');
         }
     }
 
