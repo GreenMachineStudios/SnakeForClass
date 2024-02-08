@@ -111,12 +111,6 @@ namespace Snake
 
         public void DrawSnake(Direction direction)
         {
-            //Kill snake if it touches walls
-            if (bodyLocations.Last().X >= 129 || bodyLocations.Last().X <= 1 || bodyLocations.Last().Y >= 29 || bodyLocations.Last().Y <= 1)
-            {
-                Environment.Exit(0);
-            }
-
             Console.ForegroundColor = ConsoleColor.Green;
             //Remove tail of snake
             bodyLocations.RemoveAt(0);
@@ -143,6 +137,12 @@ namespace Snake
             //Draw new head of snake
             Console.SetCursorPosition(bodyLocations.Last().X, bodyLocations.Last().Y);
             Console.Write('#');
+
+            //Kill snake if it touches walls
+            if (bodyLocations.Last().X >= 129 || bodyLocations.Last().X <= 1 || bodyLocations.Last().Y >= 29 || bodyLocations.Last().Y <= 1)
+            {
+                Environment.Exit(0);
+            }
         }
     }
 
@@ -157,23 +157,24 @@ namespace Snake
             Console.CursorVisible = false;
             Snake snake = new();
 
+            char wallChar = '■';
             Console.ForegroundColor = ConsoleColor.Cyan;
             for (int i = 0; i < screenWidth; i++)
             {
                 Console.SetCursorPosition(i, 0);
-                Console.Write("■");
+                Console.Write(wallChar);
 
                 Console.SetCursorPosition(i, screenHeight - 1);
-                Console.Write("■");
+                Console.Write(wallChar);
             }
 
             for (int i = 0; i < screenHeight; i++)
             {
                 Console.SetCursorPosition(0, i);
-                Console.Write("■");
+                Console.Write(wallChar);
 
                 Console.SetCursorPosition(screenWidth - 1, i);
-                Console.Write("■");
+                Console.Write(wallChar);
             }
 
             //GameLoop
