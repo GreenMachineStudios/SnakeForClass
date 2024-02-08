@@ -1,7 +1,8 @@
 ﻿// Add main menu with color and speed options w/ Maybe special game modes :/
 // Add randomized locations for food and eating
-// Make snake die if it hits itself
 // Add score and highscore using files and eating
+using System.Xml.Linq;
+
 namespace Snake
 {
     public enum Direction
@@ -28,6 +29,7 @@ namespace Snake
     {
         public List<Point> bodyLocations = new List<Point>();
         private Direction direction;
+        public bool gameOver = false;
 
         public Snake()
         {
@@ -112,15 +114,21 @@ namespace Snake
                 default:
                     break;
             }
+            if (bodyLocations.Last().X >= 129 || bodyLocations.Last().X <= 1 || bodyLocations.Last().Y >= 29 || bodyLocations.Last().Y <= 1)
+            {
+                gameOver = true;
+            }
+            else if (bodyLocations.Contains(newHead))
+            {
+                gameOver = true;
+            }
 
             bodyLocations.Add(newHead);
             bodyLocations.RemoveAt(0);
         }
-
         public void DrawSnake()
         {
             Console.ForegroundColor = ConsoleColor.Green;
-
             Console.SetCursorPosition(bodyLocations.First().X, bodyLocations.First().Y);
             Console.Write(' ');
 
@@ -136,7 +144,6 @@ namespace Snake
             int screenWidth = Console.WindowWidth;
             int screenHeight = Console.WindowHeight;
             int updateSpeed = 100;
-            bool gameOver = false;
             Console.CursorVisible = false;
             Snake snake = new();
 
@@ -161,13 +168,9 @@ namespace Snake
             }
 
             //GameLoop
-            while (gameOver != true)
+            while (!snake.gameOver)
             {
                 snake.UpdateSnake();
-                if (snake.bodyLocations.Last().X >= 129 || snake.bodyLocations.Last().X <= 1 || snake.bodyLocations.Last().Y >= 29 || snake.bodyLocations.Last().Y <= 1)
-                {
-                    gameOver = true;
-                }
                 Thread.Sleep(updateSpeed);
             }
         }
