@@ -1,10 +1,6 @@
 ﻿/* Snake Game In The C# Console
  * Created by Marco Videla
  * Finished: 2/8/2024
- * 
- * Changelog:
- * Added dashing when pressing space bar
- * Colored head
  */
 
 using Spectre.Console;
@@ -13,10 +9,13 @@ using NAudio.Wave;
 
 namespace Snake
 {
+    //Highscore class for getting and setting the highscore using files
     public class Highscore
     {
+        //Filepath for the highscores text file
         private static string filePath = "highscores.txt";
 
+        //Sets the highscore by writing to the text file
         public static void SetHighScore(int score)
         {
             using (StreamWriter sw = File.AppendText(filePath))
@@ -24,7 +23,7 @@ namespace Snake
                 sw.WriteLine(score);
             }
         }
-
+        //Returns the highscore by reading all the lines and converting them to ints, then returning the biggest one
         public static int GetHighScore()
         {
             int highestScore = 0;
@@ -51,6 +50,7 @@ namespace Snake
         }
     }
 
+    //Enum to hold the snake head's direction
     public enum Direction
     {
         Up,
@@ -59,6 +59,7 @@ namespace Snake
         Right
     }
 
+    //The point struct holds the coordinates of each segment of the snake's body
     public struct Point
     {
         public int X { get; set; }
@@ -70,7 +71,7 @@ namespace Snake
             this.Y = y;
         }
     }
-
+    //Class for getting and setting the position and adding the food
     public class Food
     {
         public int X { get; set; }
@@ -108,9 +109,11 @@ namespace Snake
 
     public class Snake
     {
+        //List to hold all points of the snake's body
         public List<Point> bodyLocations = new List<Point>();
         private Direction direction;
         private Food food;
+        //Boolean that gets checked every gameloop to see if the game needs to be over
         public bool gameOver = false;
 
         private int startingX = (Console.WindowWidth / 2) - 5;
@@ -121,10 +124,12 @@ namespace Snake
 
         public int updateSpeed = 70;
 
+        //Declaring soundplayers for music and sound effects
         private SoundPlayer gameOverMusic = new SoundPlayer("gameOver.wav");
         private SoundPlayer munch = new SoundPlayer("munch.wav");
         private SoundPlayer bong = new SoundPlayer("bong.wav");
 
+        //Special sound events for playing music and sound effects async
         private WaveOutEvent waveOutMusic = new WaveOutEvent();
         private AudioFileReader readerMusic = new AudioFileReader("game.wav");
 
@@ -133,7 +138,7 @@ namespace Snake
             waveOutMusic.Init(readerMusic);
             waveOutMusic.Play();
 
-
+            //Starting values for the snake when you first run the game
             direction = Direction.Right;
             bodyLocations = new List<Point> {
                 new Point(startingX, startingY),
@@ -147,7 +152,7 @@ namespace Snake
             {
                 Console.SetCursorPosition(p.X, p.Y);
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write('█');
+                AnsiConsole.Markup("[green]█[/]");
             }
 
             Console.SetCursorPosition(bodyLocations.First().X, bodyLocations.First().Y);
@@ -157,6 +162,7 @@ namespace Snake
             food.AddFood(bodyLocations);
         }
 
+        //Runs every gametick and takes keypresses, moves the snake, and score increments if you ate a fruit
         public void UpdateSnake()
         {
             if (Console.KeyAvailable)
@@ -213,7 +219,7 @@ namespace Snake
                     scoreCounter = 0;
                 }
             }
-
+            //Draw all game elements
             Draw();
 
             if (gameOver)
@@ -223,6 +229,7 @@ namespace Snake
             }
         }
 
+        //Actually moves the snake based on the desired direction
         public void MoveSnake(Direction direction)
         {
             Point newHead = new Point();
@@ -274,9 +281,28 @@ namespace Snake
             Console.SetCursorPosition(bodyLocations.First().X, bodyLocations.First().Y);
             Console.Write(' ');
 
-            Console.ForegroundColor = ConsoleColor.Green;
             Console.SetCursorPosition(bodyLocations.Last().X, bodyLocations.Last().Y);
-            Console.Write('█');
+            AnsiConsole.Markup("[springgreen4]█[/]");
+
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            if (direction == Direction.Up)
+            {
+                Console.SetCursorPosition(bodyLocations.Last().X, bodyLocations.Last().Y + 1);
+            }
+            else if (direction == Direction.Down)
+            {
+                Console.SetCursorPosition(bodyLocations.Last().X, bodyLocations.Last().Y - 1);
+            }
+            else if (direction == Direction.Right)
+            {
+                Console.SetCursorPosition(bodyLocations.Last().X - 1, bodyLocations.Last().Y);
+            }
+            else if (direction == Direction.Left)
+            {
+                Console.SetCursorPosition(bodyLocations.Last().X + 1, bodyLocations.Last().Y);
+            }
+            AnsiConsole.Markup("[green]█[/]");
+
 
             Console.ForegroundColor = ConsoleColor.Red;
             Console.SetCursorPosition(food.X, food.Y);
@@ -290,7 +316,7 @@ namespace Snake
             Console.SetCursorPosition(startingX + 5, 2);
             Console.Write("Highscore: " + Highscore.GetHighScore());
         }
-
+        //Draws the borders around the game to make it easier to see the boundries
         public void DrawBorders()
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
@@ -321,6 +347,7 @@ namespace Snake
             Console.Write('╝');
         }
 
+        //Game over menu with quit, and restart options
         private void GameOver()
         {
             string gameOverSnake = @"
@@ -419,6 +446,7 @@ namespace Snake
 
     internal class Program
     {
+        //Gameloop that inits and runs the game until gameOver
         static void Main(string[] args)
         {
             MainMenu();
@@ -434,6 +462,7 @@ namespace Snake
             }
         }
 
+        //Draw the main menu GUI and give functionalty
         static void MainMenu()
         {
             //Main menu music for coolness :)
