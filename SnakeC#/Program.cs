@@ -71,7 +71,7 @@ namespace Snake
             this.Y = y;
         }
     }
-    //Class for getting and setting the position and adding the food
+    //Class for getting, setting, and adding the food
     public class Food
     {
         public int X { get; set; }
