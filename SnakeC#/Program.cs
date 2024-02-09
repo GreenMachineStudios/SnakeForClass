@@ -213,7 +213,7 @@ namespace Snake
                 }
                 scoreCounter++;
                 //Speed up the snake if you reach 5+ points everytime
-                if (scoreCounter == 5)
+                if (scoreCounter == 2)
                 {
                     updateSpeed -= 5;
                     scoreCounter = 0;
