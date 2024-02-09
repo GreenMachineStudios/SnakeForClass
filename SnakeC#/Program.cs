@@ -13,7 +13,7 @@ namespace Snake
     public class Highscore
     {
         //Filepath for the highscores text file
-        private static string filePath = "highscores.txt";
+        private static string filePath = @"..\..\..\highscores.txt";
 
         //Sets the highscore by writing to the text file
         public static void SetHighScore(int score)
@@ -113,25 +113,26 @@ namespace Snake
         public List<Point> bodyLocations = new List<Point>();
         private Direction direction;
         private Food food;
+
         //Boolean that gets checked every gameloop to see if the game needs to be over
         public bool gameOver = false;
 
-        private int startingX = (Console.WindowWidth / 2) - 5;
-        private int startingY = (Console.WindowHeight / 2) - 1;
+        int startingX = (Console.WindowWidth / 2) - 5;
+        int startingY = (Console.WindowHeight / 2) - 1;
 
-        private int score = 0;
-        private int scoreCounter = 0;
+        int score = 0;
+        int scoreCounter = 0;
 
         public int updateSpeed = 70;
 
         //Declaring soundplayers for music and sound effects
-        private SoundPlayer gameOverMusic = new SoundPlayer("gameOver.wav");
-        private SoundPlayer munch = new SoundPlayer("munch.wav");
-        private SoundPlayer bong = new SoundPlayer("bong.wav");
+        SoundPlayer gameOverMusic = new SoundPlayer(@"..\..\..\gameOver.wav");
+        SoundPlayer munch = new SoundPlayer(@"..\..\..\munch.wav");
+        SoundPlayer bong = new SoundPlayer(@"..\..\..\bong.wav");
 
         //Special sound events for playing music and sound effects async
         private WaveOutEvent waveOutMusic = new WaveOutEvent();
-        private AudioFileReader readerMusic = new AudioFileReader("game.wav");
+        private AudioFileReader readerMusic = new AudioFileReader(@"..\..\..\game.wav");
 
         public Snake()
         {
@@ -213,7 +214,7 @@ namespace Snake
                 }
                 scoreCounter++;
                 //Speed up the snake if you reach 5+ points everytime
-                if (scoreCounter == 2)
+                if (scoreCounter == 5)
                 {
                     updateSpeed -= 5;
                     scoreCounter = 0;
@@ -226,6 +227,11 @@ namespace Snake
             {
                 waveOutMusic.Stop();
                 GameOver();
+            }
+            else if (readerMusic.Position >= readerMusic.Length)
+            {
+                readerMusic.Position = 0;
+                waveOutMusic.Play();
             }
         }
 
@@ -466,7 +472,7 @@ namespace Snake
         static void MainMenu()
         {
             //Main menu music for coolness :)
-            SoundPlayer menuMusic = new SoundPlayer("menu.wav");
+            SoundPlayer menuMusic = new SoundPlayer(@"..\..\..\menu.wav");
             menuMusic.PlayLooping();
 
             int highscore = Highscore.GetHighScore();
