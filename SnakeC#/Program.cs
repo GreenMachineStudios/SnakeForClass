@@ -1,6 +1,9 @@
 ﻿/* Snake Game In The C# Console
  * Created by Marco Videla
  * Finished: 2/8/2024
+ * 
+ * Art from https://ascii.co.uk/
+ * Music from https://pixabay.com/
  */
 
 using Spectre.Console;
